@@ -202,6 +202,8 @@ class DihedralUtils(BasicUtils):
                 gatelist.append('x %d' % gate[1])
             elif gate[0] == 'cx':
                 gatelist.append('cx %d %d' % (gate[1], gate[2]))
+            elif gate[0] == 'cs':
+                gatelist.append('cs %d %d' % (gate[1], gate[2]))
             else:
                 raise ValueError("Unknown gate type", gate[0])
 

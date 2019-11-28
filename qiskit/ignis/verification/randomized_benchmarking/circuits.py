@@ -22,7 +22,7 @@ Generates randomized benchmarking sequences
 import copy
 import numpy as np
 import qiskit
-
+from qiskit.quantum_info.operators import Operator
 from .Clifford import Clifford
 from .clifford_utils import CliffordUtils as clutils
 from .dihedral import CNOTDihedral
@@ -512,11 +512,21 @@ def get_quantum_circuit(gatelist, num_qubits):
         else:
             qubits = [qr[int(x)] for x in split[1:]]
 
+        cs_op = Operator([[1, 0, 0, 0],
+                          [0, 1, 0, 0],
+                          [0, 0, 1, 0],
+                          [0, 0, 0, 1j]])
+
         for sub_op in op_names:
-            operation = eval('qiskit.QuantumCircuit.' + sub_op)
-            if sub_op == 'u1':
-                operation(qc, theta, *qubits)
+            #print (sub_op, qubits, *qubits)
+            if sub_op == 'cs':
+                qc.unitary(cs_op, qubits, label='cs')
             else:
-                operation(qc, *qubits)
+                operation = eval('qiskit.QuantumCircuit.' + sub_op)
+                if sub_op == 'u1':
+                    operation(qc, theta, *qubits)
+                else:
+                    operation(qc, *qubits)
+            #print (qc)
 
     return qc
