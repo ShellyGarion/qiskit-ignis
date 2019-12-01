@@ -550,3 +550,207 @@ def make_dict_next(n_qubits, dicts_prior):
                                 and new_elem.key not in obj:
                             obj[new_elem.key] = (new_elem, new_circ)
     return obj
+
+#
+# Canonical forms to the 2-qubit CNOT-Dihedral group
+# Using the generators: T,X,CS,CX
+#
+
+def make_dict_CS(n_qubits=2):
+    """Canonical forms for the CS-like class"""
+    assert n_qubits == 2, "n_qubits is not 2!"
+    obj = {}
+    for i in range(16**n_qubits):
+        elem = CNOTDihedral(n_qubits)
+        circ = []
+        num = i
+        for j in range(n_qubits):
+            xpower = int(num % 2)
+            tpower = int(((num - num % 2) / 2) % 8)
+            if tpower > 0:
+                elem.phase(tpower, j)
+                circ.append(("u1", tpower, j))
+            if xpower == 1:
+                elem.flip(j)
+                circ.append(("x", j))
+            num = int((num - num % 16) / 16)
+
+        new_elem = copy.deepcopy(elem)
+        new_circ = copy.deepcopy(circ)
+        new_elem.phase(1, 0)
+        new_elem.phase(1, 1)
+        new_elem.cnot(0, 1)
+        new_elem.phase(7, 1)
+        new_elem.cnot(0, 1)
+        new_circ.append(("cs", 0, 1))
+        obj[new_elem.key] = (new_elem, new_circ)
+
+        new_elem = copy.deepcopy(elem)
+        new_circ = copy.deepcopy(circ)
+        new_elem.phase(7, 0)
+        new_elem.phase(7, 1)
+        new_elem.cnot(0, 1)
+        new_elem.phase(1, 1)
+        new_elem.cnot(0, 1)
+        new_circ.append(("cs", 0, 1))
+        new_circ.append(("cs", 0, 1))
+        new_circ.append(("cs", 0, 1))
+        obj[new_elem.key] = (new_elem, new_circ)
+
+    return obj
+
+def make_dict_CZ(n_qubits=2):
+    """Canonical forms for the CZ-like class
+    (need 2 CS gates)"""
+    assert n_qubits == 2, "n_qubits is not 2!"
+    obj = {}
+    for i in range(16**n_qubits):
+        elem = CNOTDihedral(n_qubits)
+        circ = []
+        num = i
+        for j in range(n_qubits):
+            xpower = int(num % 2)
+            tpower = int(((num - num % 2) / 2) % 8)
+            if tpower > 0:
+                elem.phase(tpower, j)
+                circ.append(("u1", tpower, j))
+            if xpower == 1:
+                elem.flip(j)
+                circ.append(("x", j))
+            num = int((num - num % 16) / 16)
+
+        new_elem = copy.deepcopy(elem)
+        new_circ = copy.deepcopy(circ)
+        new_elem.phase(1, 0)
+        new_elem.phase(1, 1)
+        new_elem.cnot(0, 1)
+        new_elem.phase(7, 1)
+        new_elem.cnot(0, 1)
+
+        new_elem.phase(1, 0)
+        new_elem.phase(1, 1)
+        new_elem.cnot(0, 1)
+        new_elem.phase(7, 1)
+        new_elem.cnot(0, 1)
+
+        new_circ.append(("cs", 0, 1))
+        new_circ.append(("cs", 0, 1))
+
+        obj[new_elem.key] = (new_elem, new_circ)
+    return obj
+
+def make_dict_CX(n_qubits=2):
+    """Canonical forms for the CX-like class"""
+    assert n_qubits == 2, "n_qubits is not 2!"
+    obj = {}
+    for i in range(16**n_qubits):
+        elem = CNOTDihedral(n_qubits)
+        circ = []
+        num = i
+        for j in range(n_qubits):
+            xpower = int(num % 2)
+            tpower = int(((num - num % 2) / 2) % 8)
+            if tpower > 0:
+                elem.phase(tpower, j)
+                circ.append(("u1", tpower, j))
+            if xpower == 1:
+                elem.flip(j)
+                circ.append(("x", j))
+            num = int((num - num % 16) / 16)
+
+        for kpower in range(4):
+            new_elem = copy.deepcopy(elem)
+            new_circ = copy.deepcopy(circ)
+            new_elem.cnot(0, 1)
+            new_circ.append(("cx", 0, 1))
+            new_elem.phase(kpower, 1)
+            new_circ.append(("u1", kpower, 1))
+            obj[new_elem.key] = (new_elem, new_circ)
+
+            new_elem = copy.deepcopy(elem)
+            new_circ = copy.deepcopy(circ)
+            new_elem.cnot(1, 0)
+            new_circ.append(("cx", 1, 0))
+            new_elem.phase(kpower, 0)
+            new_circ.append(("u1", kpower, 0))
+            obj[new_elem.key] = (new_elem, new_circ)
+
+    return obj
+
+def make_dict_2CX(n_qubits=2):
+    """Canonical forms for the 2-CX-like class
+    (need 2 CX gates)"""
+    assert n_qubits == 2, "n_qubits is not 2!"
+    obj = {}
+    for i in range(16**n_qubits):
+        elem = CNOTDihedral(n_qubits)
+        circ = []
+        num = i
+        for j in range(n_qubits):
+            xpower = int(num % 2)
+            tpower = int(((num - num % 2) / 2) % 8)
+            if tpower > 0:
+                elem.phase(tpower, j)
+                circ.append(("u1", tpower, j))
+            if xpower == 1:
+                elem.flip(j)
+                circ.append(("x", j))
+            num = int((num - num % 16) / 16)
+
+        for kpower in range(4):
+            new_elem = copy.deepcopy(elem)
+            new_circ = copy.deepcopy(circ)
+            new_elem.cnot(0, 1)
+            new_circ.append(("cx", 0, 1))
+            new_elem.cnot(1, 0)
+            new_circ.append(("cx", 1, 0))
+            new_elem.phase(kpower, 1)
+            new_circ.append(("u1", kpower, 1))
+            obj[new_elem.key] = (new_elem, new_circ)
+
+            new_elem = copy.deepcopy(elem)
+            new_circ = copy.deepcopy(circ)
+            new_elem.cnot(1, 0)
+            new_circ.append(("cx", 1, 0))
+            new_elem.cnot(0, 1)
+            new_circ.append(("cx", 0, 1))
+            new_elem.phase(kpower, 0)
+            new_circ.append(("u1", kpower, 0))
+            obj[new_elem.key] = (new_elem, new_circ)
+
+    return obj
+
+def make_dict_3CX(n_qubits=2):
+    """Canonical forms for the 3-CX-like class
+    (need 3 CX gates)"""
+    assert n_qubits == 2, "n_qubits is not 2!"
+    obj = {}
+    for i in range(16**n_qubits):
+        elem = CNOTDihedral(n_qubits)
+        circ = []
+        num = i
+        for j in range(n_qubits):
+            xpower = int(num % 2)
+            tpower = int(((num - num % 2) / 2) % 8)
+            if tpower > 0:
+                elem.phase(tpower, j)
+                circ.append(("u1", tpower, j))
+            if xpower == 1:
+                elem.flip(j)
+                circ.append(("x", j))
+            num = int((num - num % 16) / 16)
+
+        for kpower in range(8):
+            new_elem = copy.deepcopy(elem)
+            new_circ = copy.deepcopy(circ)
+            new_elem.cnot(0, 1)
+            new_circ.append(("cx", 0, 1))
+            new_elem.cnot(1, 0)
+            new_circ.append(("cx", 1, 0))
+            new_elem.phase(kpower, 1)
+            new_circ.append(("u1", kpower, 1))
+            new_elem.cnot(0, 1)
+            new_circ.append(("cx", 0, 1))
+            obj[new_elem.key] = (new_elem, new_circ)
+
+    return obj

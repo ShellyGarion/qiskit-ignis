@@ -17,7 +17,8 @@ Advanced CNOT-dihedral operations needed for randomized benchmarking.
 """
 
 import numpy as np
-from .dihedral import make_dict_0, make_dict_next
+from .dihedral import make_dict_0, make_dict_next, make_dict_CS, \
+    make_dict_CZ, make_dict_CX, make_dict_2CX, make_dict_3CX
 from .basic_utils import BasicUtils
 
 try:
@@ -98,6 +99,43 @@ class DihedralUtils(BasicUtils):
 
         return G
 
+    # --------------------------------------------------------
+    # Create canonical CNOT-dihedral group tables
+    # --------------------------------------------------------
+    def cnot_dihedral_tables2(self, num_qubits=2):
+        """
+        Generate a table of all CNOT-dihedral group elements
+        on num_qubits=2 qubits, using gates u1, cx and cs
+
+        Args:
+            num_qubits: number of qubits.
+
+        Returns:
+            A table of all CNOT-dihedral group elements
+            on num_qubits.
+        """
+
+        # Dihedral class:
+        g0 = make_dict_0(2)
+        # CS-like class:
+        g1 = make_dict_CS(2)
+        # CZ-like class:
+        g2 = make_dict_CZ(2)
+        # CX-like class:
+        g3 = make_dict_CX(2)
+        # 2-CX-like class:
+        g4 = make_dict_2CX(2)
+        # 3-CX-like class:
+        g5 = make_dict_3CX(2)
+
+        G_table = {**g0, **g1, **g2, **g3, **g4, **g5}
+        sizes = list(map(len, [g0, g1, g2, g3, g4, g5]))
+        print(sizes)
+        print(len(G_table))
+        print (G_table)
+        return G_table
+
+
     def pickle_dihedral_table(self, num_qubits=2):
         """
          Create pickled versions of CNOT-dihedral group tables.
@@ -114,7 +152,8 @@ class DihedralUtils(BasicUtils):
                 "number of qubits bigger than is not supported for pickle")
 
         picklefile = 'cnot_dihedral_' + str(num_qubits) + '.pickle'
-        table = self.cnot_dihedral_tables(num_qubits)
+        #table = self.cnot_dihedral_tables(num_qubits) # cnot-dihedral table
+        table = self.cnot_dihedral_tables2(num_qubits=2) # canonical table
 
         with open(picklefile, "wb") as pf:
             pickle.dump(table, pf)
@@ -228,7 +267,9 @@ class DihedralUtils(BasicUtils):
         elem_key = G_keys[idx]
         elem = G_table[elem_key]
         circ = (G_table[elem_key][1])
+        print (elem_key, elem, circ)
         gatelist = self.elem_to_gates(circ)
+        print ("**********", gatelist)
 
         self._gatelist = gatelist
         self._elmnt = elem[0]
