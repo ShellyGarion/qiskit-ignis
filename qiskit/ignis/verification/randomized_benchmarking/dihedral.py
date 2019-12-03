@@ -663,16 +663,18 @@ def make_dict_CX(n_qubits=2):
             new_circ = copy.deepcopy(circ)
             new_elem.cnot(0, 1)
             new_circ.append(("cx", 0, 1))
-            new_elem.phase(kpower, 1)
-            new_circ.append(("u1", kpower, 1))
+            if kpower > 0:
+                new_elem.phase(kpower, 1)
+                new_circ.append(("u1", kpower, 1))
             obj[new_elem.key] = (new_elem, new_circ)
 
             new_elem = copy.deepcopy(elem)
             new_circ = copy.deepcopy(circ)
             new_elem.cnot(1, 0)
             new_circ.append(("cx", 1, 0))
-            new_elem.phase(kpower, 0)
-            new_circ.append(("u1", kpower, 0))
+            if kpower > 0:
+                new_elem.phase(kpower, 0)
+                new_circ.append(("u1", kpower, 0))
             obj[new_elem.key] = (new_elem, new_circ)
 
     return obj
@@ -704,8 +706,9 @@ def make_dict_2CX(n_qubits=2):
             new_circ.append(("cx", 0, 1))
             new_elem.cnot(1, 0)
             new_circ.append(("cx", 1, 0))
-            new_elem.phase(kpower, 1)
-            new_circ.append(("u1", kpower, 1))
+            if kpower > 0:
+                new_elem.phase(kpower, 1)
+                new_circ.append(("u1", kpower, 1))
             obj[new_elem.key] = (new_elem, new_circ)
 
             new_elem = copy.deepcopy(elem)
@@ -714,8 +717,9 @@ def make_dict_2CX(n_qubits=2):
             new_circ.append(("cx", 1, 0))
             new_elem.cnot(0, 1)
             new_circ.append(("cx", 0, 1))
-            new_elem.phase(kpower, 0)
-            new_circ.append(("u1", kpower, 0))
+            if kpower > 0:
+                new_elem.phase(kpower, 0)
+                new_circ.append(("u1", kpower, 0))
             obj[new_elem.key] = (new_elem, new_circ)
 
     return obj
@@ -747,8 +751,9 @@ def make_dict_3CX(n_qubits=2):
             new_circ.append(("cx", 0, 1))
             new_elem.cnot(1, 0)
             new_circ.append(("cx", 1, 0))
-            new_elem.phase(kpower, 1)
-            new_circ.append(("u1", kpower, 1))
+            if kpower > 0:
+                new_elem.phase(kpower, 1)
+                new_circ.append(("u1", kpower, 1))
             new_elem.cnot(0, 1)
             new_circ.append(("cx", 0, 1))
             obj[new_elem.key] = (new_elem, new_circ)

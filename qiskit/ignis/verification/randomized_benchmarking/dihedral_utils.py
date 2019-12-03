@@ -132,7 +132,6 @@ class DihedralUtils(BasicUtils):
         sizes = list(map(len, [g0, g1, g2, g3, g4, g5]))
         print(sizes)
         print(len(G_table))
-        print (G_table)
         return G_table
 
 
@@ -152,8 +151,8 @@ class DihedralUtils(BasicUtils):
                 "number of qubits bigger than is not supported for pickle")
 
         picklefile = 'cnot_dihedral_' + str(num_qubits) + '.pickle'
-        table = self.cnot_dihedral_tables(num_qubits) # cnot-dihedral table
-        #table = self.cnot_dihedral_tables2(num_qubits=2) # canonical table
+        #table = self.cnot_dihedral_tables(num_qubits) # cnot-dihedral table
+        table = self.cnot_dihedral_tables2(num_qubits=2) # canonical table
 
         with open(picklefile, "wb") as pf:
             pickle.dump(table, pf)
@@ -267,9 +266,7 @@ class DihedralUtils(BasicUtils):
         elem_key = G_keys[idx]
         elem = G_table[elem_key]
         circ = (G_table[elem_key][1])
-        #print (elem_key, elem, circ)
         gatelist = self.elem_to_gates(circ)
-        #print ("**********", gatelist)
 
         self._gatelist = gatelist
         self._elmnt = elem[0]
@@ -342,6 +339,10 @@ class DihedralUtils(BasicUtils):
             for gate in reversed(gatelist):
                 if gate[0] == "u1":
                     inverse.append(("u1", 8 - gate[1], gate[2]))
+                elif gate[0] == "cs":
+                    inverse.append(gate)
+                    inverse.append(gate)
+                    inverse.append(gate)
                 else:
                     inverse.append(gate)
             return self.elem_to_gates(inverse)
