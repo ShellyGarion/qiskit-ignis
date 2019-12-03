@@ -152,8 +152,8 @@ class DihedralUtils(BasicUtils):
                 "number of qubits bigger than is not supported for pickle")
 
         picklefile = 'cnot_dihedral_' + str(num_qubits) + '.pickle'
-        #table = self.cnot_dihedral_tables(num_qubits) # cnot-dihedral table
-        table = self.cnot_dihedral_tables2(num_qubits=2) # canonical table
+        table = self.cnot_dihedral_tables(num_qubits) # cnot-dihedral table
+        #table = self.cnot_dihedral_tables2(num_qubits=2) # canonical table
 
         with open(picklefile, "wb") as pf:
             pickle.dump(table, pf)
@@ -267,9 +267,9 @@ class DihedralUtils(BasicUtils):
         elem_key = G_keys[idx]
         elem = G_table[elem_key]
         circ = (G_table[elem_key][1])
-        print (elem_key, elem, circ)
+        #print (elem_key, elem, circ)
         gatelist = self.elem_to_gates(circ)
-        print ("**********", gatelist)
+        #print ("**********", gatelist)
 
         self._gatelist = gatelist
         self._elmnt = elem[0]
