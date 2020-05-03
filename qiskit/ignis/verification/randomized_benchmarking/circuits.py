@@ -517,10 +517,18 @@ def get_quantum_circuit(gatelist, num_qubits):
                           [0, 0, 1, 0],
                           [0, 0, 0, 1j]])
 
+        cx01_op = Operator([[1, 0, 0, 0],
+                            [0, 0, 0, 1],
+                            [0, 0, 1, 0],
+                            [0, 1, 0, 0]])
+
         for sub_op in op_names:
             #print (sub_op, qubits, *qubits)
             if sub_op == 'cs':
                 qc.unitary(cs_op, qubits, label='cs')
+            elif sub_op == 'usr_gate_cx':
+                qc.unitary(cx01_op, qubits, label='usr_gate_cx')
+
             else:
                 operation = eval('qiskit.QuantumCircuit.' + sub_op)
                 if sub_op == 'u1':
